@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import Server.Game_Server;
 import Server.game_service;
+import gui.Graph_GUI;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
@@ -77,6 +78,7 @@ public class SimpleGameClient {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
 				String robot_json = log.get(i);
+				//System.out.println(robot_json);
 				try {
 					JSONObject line = new JSONObject(robot_json);
 					JSONObject ttt = line.getJSONObject("Robot");
@@ -84,6 +86,7 @@ public class SimpleGameClient {
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
 				
+					
 					if(dest==-1) {	
 						dest = nextNode(gg, src);
 						game.chooseNextEdge(rid, dest);

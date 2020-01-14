@@ -81,10 +81,10 @@ public Graph_Algo()
 	
 	@Override
 	public void init(String JSONfile) {
-	/*
+	
 		try 
 		{
-			FileInputStream file =new FileInputStream(file_name);
+			FileInputStream file =new FileInputStream(JSONfile);
 			ObjectInputStream object=new ObjectInputStream(file);
 			this.D= (graph) object.readObject();
 			
@@ -100,9 +100,9 @@ public Graph_Algo()
         { 
             System.out.println("ClassNotFoundException is caught"); 
         } 
-        */
+        
 
-		try 
+		/**try 
 		{	
 			InputStream fis=new FileInputStream(JSONfile);
 		JSONObject read=new JSONObject (new JSONTokener(fis));
@@ -128,7 +128,7 @@ public Graph_Algo()
 			
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
-		}
+		}*/
 		
 	}
 

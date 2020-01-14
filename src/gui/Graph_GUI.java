@@ -33,6 +33,7 @@ import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node;
 import dataStructure.node_data;
+import oop_dataStructure.OOP_DGraph;
 import utils.Point3D;
 
 public class Graph_GUI extends JFrame implements ActionListener, MouseListener {
@@ -47,13 +48,18 @@ public Graph_GUI()
 		 initGUI();
 }
 	
-public Graph_GUI(graph D)
+public Graph_GUI(graph gg)
 {
-		 this.graph=D;
+		 this.graph=gg;
 	     algoG = new Graph_Algo();
 		 initGUI();
 }
-	
+public Graph_GUI(DGraph D)
+{
+	 this.graph=D;
+     algoG = new Graph_Algo();
+	 initGUI();
+}
 private void initGUI() 
 {
 	this.setSize(800,800);
