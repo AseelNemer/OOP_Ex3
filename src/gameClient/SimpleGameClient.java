@@ -9,7 +9,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import Server.Game_Server;
 import Server.game_service;
-import gui.Graph_GUI;
+
+
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
@@ -40,7 +41,6 @@ public class SimpleGameClient {
 		OOP_DGraph gg = new OOP_DGraph();
 		gg.init(g);
 		String info = game.toString();
-		//System.out.println(info);
 		JSONObject line;
 		try {
 			line = new JSONObject(info);

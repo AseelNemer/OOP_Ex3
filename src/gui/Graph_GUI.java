@@ -37,7 +37,7 @@ import oop_dataStructure.OOP_DGraph;
 import utils.Point3D;
 
 public class Graph_GUI extends JFrame implements ActionListener, MouseListener {
-
+	 public static final double EPS1 = 0.001;
 	 private graph graph;
 	 private Graph_Algo algoG;
 	 
@@ -171,7 +171,8 @@ public void paint(Graphics g )
 
 
 			Iterator<edge_data> itr=edg.iterator();
-			while(itr.hasNext()) {
+			while(itr.hasNext()) 
+			{
 
 				edge_data s=itr.next();
 				
@@ -188,13 +189,11 @@ public void paint(Graphics g )
 			
 
 				g.setColor(Color.YELLOW);
-				int x=(int)0.8*p2.ix()+ (int)0.2*p.ix();
-				int y =(int)0.8*p2.iy()+ (int)0.2*p.iy();
-				g.fillOval(x-5, y-5, 10, 10);
-				
-				//g.fillOval(x, y, width, height);
+				int x=(int) ((0.8*p2.ix())+ (0.2*p.ix()));
+				int y =(int)((0.8*p2.iy())+ (0.2*p.iy()));
+				g.fillOval(x-5,y-5,10,10);
 			}
-			}
+		}
 		
 	}
 
@@ -529,7 +528,10 @@ public void mouseReleased(MouseEvent e) {
 	System.out.println("mouseReleased");
 }
 
-/**public static graph nodesFactory() {
+//public static graph nodesFactory() {
+public static void main(String[] args) {
+	
+
 	graph d=new DGraph();
 	d.addNode(new node(2,new Point3D(250,100)));
 	d.addNode(new node(1,new Point3D(50,250)));
@@ -542,15 +544,13 @@ public void mouseReleased(MouseEvent e) {
 	 d.connect(2, 5, 2);
 	 d.connect(4, 5, 3);
 	 d.connect(3, 4, 1.5);
-<<<<<<< HEAD
+
 	graph_algorithms  g=new Graph_Algo();
 	g.init(d);
-	//System.out.println(g.isConnected());
+	 Graph_GUI gui=new Graph_GUI(d);
+	 gui.initGUI();
+
 	 
 
-=======
-	 
->>>>>>> 9acd3493fd39d1d4dacb90970d8eb4f378372abc
-	 return d;
-}*/
+}
 }

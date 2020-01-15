@@ -3,8 +3,16 @@ import java.util.HashMap;
 
 import java.util.Iterator;
 
-import gui.Graph_GUI;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import gui.Graph_GUI;
+import utils.Point3D;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Collection;
 
 public class DGraph implements graph{
@@ -33,7 +41,41 @@ public DGraph()
 		
 		return edges.get(src).get(dest);
 	}
+	public void init(String JSONfile) {
+		JSONObject line;
 
+		try {
+			line = new JSONObject(JSONfile);
+			JSONArray Nodes = line.getJSONArray("Nodes");
+			JSONArray Edges = line.getJSONArray("Edges");
+
+
+			for(int i =0; i< Nodes.length();i++)
+			{
+				node_data n=new  node();
+
+				int id = Nodes.getJSONObject(i).getInt("id");
+				String location = Nodes.getJSONObject(i).getString("pos");
+				String[] point=location.split(",");
+				
+				double x=Double.valueOf(point[0]);
+				double y =Double.valueOf(point[1]);
+				Point3D p= new Point3D(x,y);
+				n=new node(id, p);
+				this.addNode(n);
+			}
+			for(int i =0; i< Edges.length();i++)
+			{
+				edge_data d  =	new EdgeData();
+
+				int src = Edges.getJSONObject(i).getInt("src");
+				int dest = Edges.getJSONObject(i).getInt("dest");
+				double w = Edges.getJSONObject(i).getDouble("w");
+				this.connect(src, dest, w);
+			}
+		}
+		catch (JSONException e) {e.printStackTrace();}
+	}
 	@Override
 	public void addNode(node_data n) {
 
