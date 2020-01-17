@@ -30,29 +30,30 @@ import utils.Point3D;
 	}
 	
 	
-	public void init(String JSONfile) 
-	{
+	public void init(String JSONfile) {
+
 		InputStream fis;
-		try 
-		{
-		
-			JSONObject read=new JSONObject (JSONfile);
-			this.value=(double) read.get("value");
-			this.type=(int) read.get("type");
-			this.p=(Point3D) read.get("pos");
-		
-	
-		} 
-		catch (JSONException e) 
-		{
+		JSONObject read;
+		try {
+
+			 read=new JSONObject(JSONfile);
+			 JSONObject ttt = read.getJSONObject("Fruit");
+			this.value=(double) ttt.get("value");
+			this.type=(int) ttt.get("type");
+			String s= (String) ttt.get("pos");
+			this.p=new Point3D(s);
+			
+		}catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		
 	}
 	
 	public double getValue() 
 	{
-		return this.value;
+		return (double)this.value;
 	}
 	
 	

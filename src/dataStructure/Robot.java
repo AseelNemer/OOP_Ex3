@@ -1,5 +1,8 @@
 package dataStructure;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import utils.Point3D;
 
 public class Robot {
@@ -20,7 +23,19 @@ public class Robot {
 		this.dest = dest;
 		this.value = value;
 	}
-	
+	public void init(String JASON) {
+		 try {
+			JSONObject line = new JSONObject(JASON);
+			JSONObject ttt = line.getJSONObject("Robot");
+			this.id = ttt.getInt("id");
+			this.src = ttt.getInt("src");
+			this.dest = ttt.getInt("dest");
+			Point3D p=new Point3D(ttt.getString("pos"));
+			this.pos=p;
+		 }catch(JSONException e) {e.printStackTrace();
+		 
+		 }
+	}
 	/**
 	 * return the source of this robot 
 	 * @return
