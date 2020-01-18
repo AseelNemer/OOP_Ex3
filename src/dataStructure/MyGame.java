@@ -176,7 +176,12 @@ public class MyGame {
 		{
 			return this.game;
 		}
-	
+		public void update()
+		{
+			
+		     setFruits();
+		     setRobots(robots_num);
+		}
 	
 	
 }

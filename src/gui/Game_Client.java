@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.peer.MouseInfoPeer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.MouseInputListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +38,9 @@ import dataStructure.Robot;
 import dataStructure.edge_data;
 import dataStructure.node;
 import dataStructure.node_data;
+import javafx.scene.input.MouseButton;
 import sun.awt.RepaintArea;
+import sun.security.action.GetLongAction;
 import utils.Point3D;
 import utils.StdDraw;
 import dataStructure.*;
@@ -46,11 +50,11 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 
 	private MyGame game ;
 	private static DGraph graph;
-	private LinkedList<Fruit> fruits=new LinkedList<Fruit>();
-	private LinkedList<Robot> robots=new LinkedList<Robot>();
+	private static LinkedList<Fruit> fruits=new LinkedList<Fruit>();
+	private static LinkedList<Robot> robots=new LinkedList<Robot>();
 	private static double[] scale_x;
 	private static double[] scale_y;
-	 public long time ;
+	 public static long time ;
 	
 	
 	public Game_Client()
@@ -75,7 +79,7 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 			this.scale_y=game.scale_y();
 			game.getgame().startGame();
 			time=game.getgame().timeToEnd();
-			System.out.println(time);
+			
 		}
 		catch(Exception e)
 			{
@@ -87,48 +91,54 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 		this.addMouseListener(this);
 		this.setVisible(true);
 	}
+	public void update(Graphics g)
+	{
+	  paint(g);
+	}
 	public void run()
 	{
-		try {
-			startgame();
-		}
-		catch (Exception e)
-		{
-			System.out.println(e.getMessage());
-		}
-	}
-	
-	
-	public void startgame()
-	{
 		game.getgame().startGame();
-		while (game.getgame().isRunning())
-		{
-			repaint();
-			long t = game.getgame().timeToEnd();
-			String TimeLeft = "Time to end : " + t;
-			System.out.println(t/1000);
-			moveRobots(game.getgame(), graph);
-			repaint();
-		}		
-		repaint();
-		
-		
-	}
+		int index=0;
+		long time=50;
+		while(game.getgame().isRunning()) {
+			
+			
+				game.getgame().move();
+				game.update();
+			try {
+				Thread.sleep(time);
+					index++;
+					
+				if(index%1==0) {
+						paintfruit(getGraphics());
+						paintRobot(getGraphics());
+					}
+			}
+			catch (InterruptedException e) {e.printStackTrace();}	
+		}
 	
-	public void paint(Graphics g )
-	{
-		 BufferedImage bufferedImage = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
-         Graphics2D g2d = bufferedImage.createGraphics();
-         g2d.setBackground(new Color(240, 240, 240));
-        // g2d.clearRect(0, 0, 900, 900);
-        
-         
-		Collection<node_data> node=graph.getV();
-		Iterator<node_data> nodes=node.iterator();
+		String results = game.toString();
+		System.out.println("Game Over: "+results);
+	
+	
+		this.setVisible(false);
+		System.exit(0);
+	}
 
-		node=graph.getV();
-		nodes=node.iterator();
+	
+	
+	public void paint(Graphics g2d)
+	{
+			
+			super.paint(g2d);;
+			/**Graphics2D g2d = (Graphics2D) g;
+		    g2d.setBackground(new Color(240, 240, 240));
+		    */
+		        Collection<node_data> node=graph.getV();
+		        Iterator<node_data> nodes=node.iterator();
+		
+		        node=graph.getV();
+		        nodes=node.iterator();
 			while(nodes.hasNext()) 
 			{
 				node_data n=nodes.next();
@@ -170,26 +180,26 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 					int y2 =(int)((0.8*p2.iy())+ (0.2*p.iy()));
 					g2d.fillOval(x2-5,y2-5,10,10);
 					
-					//g.fillOval(x, y, width, height);
 				}
 				
 				}
 			
-			 g.setColor(Color.BLACK);
-		        g.setFont(new Font("Arial", Font.BOLD, 20));
-		        g.drawString("Time left: " + (game.getgame().timeToEnd() / 1000), 70, 70);
-			paintRobot(g);
-			paintfruit(g);
+				this.time=game.getgame().timeToEnd()/1000;
+				g2d.setColor(Color.BLACK);
+		        g2d.setFont(new Font("Arial", Font.BOLD, 20));
+		        g2d.drawString("Time left: " + (this.time ), 70, 70);
+		        
+		        
+			paintRobot(g2d);
+			paintfruit(g2d);
 			
-			
-			 Graphics2D g2dComponent = (Graphics2D) g;
-	         g2dComponent.drawImage(bufferedImage, null, 0, 0);
-			
-			//paintrobot(g);
 	}
 	public  void paintRobot(Graphics g)
 	{
-		LinkedList<Robot> robots=game.get_robot();
+		
+        //g.setBackground(new Color(240, 240, 240));
+		this.robots=game.get_robot();
+		LinkedList<Robot> robots=this.robots;
 		for (int i=0 ;i<robots.size();i++)
 		{
 			Robot r=robots.get(i);
@@ -197,30 +207,34 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 			int y=(int)(scale(r.getpos().y(),scale_y[0],scale_y[1],200,700));
 			g.setColor(Color.BLACK);
 			g.drawOval(x-7,y-7, 30, 30);
-			 g.setFont(new Font("Arial", Font.BOLD, 15));
+			g.setFont(new Font("Arial", Font.BOLD, 15));
 		}
+		
 	}
-	public void paintfruit( Graphics g)
+	public void paintfruit( Graphics g2d)
 	{
+		
+       // g2d.setBackground(new Color(240, 240, 240));
 		this.fruits=game.get_fruits();
 		for (int i=0 ;i<this.fruits.size();i++)
 			{
 				Fruit fr=this.fruits.get(i);
 				if (fr.getType()==1)
 				{
-					g.setColor(Color.CYAN);
+					g2d.setColor(Color.CYAN);
 					int x=(int)(scale(fr.getPOS().x(),scale_x[0],scale_x[1],50,850));
 					int y=(int)(scale(fr.getPOS().y(),scale_y[0],scale_y[1],200,700));
-					g.fillOval(x-7,y-7, 20, 20);
+					g2d.fillOval(x-7,y-7, 20, 20);
 				}
 				if(fr.getType()==-1)
 				{
-					g.setColor(Color.GREEN);
+					g2d.setColor(Color.GREEN);
 					int x=(int)(scale(fr.getPOS().x(),scale_x[0],scale_x[1],50,850));
 					int y=(int)(scale(fr.getPOS().y(),scale_y[0],scale_y[1],200,700));
-					g.fillOval(x-7,y-7, 20, 20);
+					g2d.fillOval(x-7,y-7, 20, 20);
 				}
 			}
+		 
 	}
 	private static double scale(double data, double r_min, double r_max, 
 			double t_min, double t_max)
@@ -252,7 +266,7 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 					s=src;
 					temp=r;	
 				}
-			}
+			}*/
 		 
 			String str=JOptionPane.showInputDialog("please inter a robot id you want to move");
 			int id=Integer.valueOf(str);
@@ -284,53 +298,95 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 					}
 				 }
 			}
-			repaint();
-		*/
-		 for (int i = 0; i < game.get_robot_num(); i++) {
+		
+		
+		/** for (int i = 0; i < game.get_robot_num(); i++) {
 	            Robot robot = game.get_robot().get(i);
 	            if (robot.getdest() == -1) {
 	                String dst_str = JOptionPane.showInputDialog(this, "Please insert robot " + robot.getid() + " next node destination");
 	                try {
 	                    int dest = Integer.parseInt(dst_str);
 	                    this.game.getgame().chooseNextEdge(robot.getid(), dest);
+						System.out.println("Turn to node: "+dest+"  time to end:"+(time/1000));
+						System.out.println(game.getgame().getRobots().get(i));
 	                } catch (Exception ex) {
 	                    JOptionPane.showMessageDialog(this, "ERROR", "ERROR", JOptionPane.ERROR_MESSAGE);
 	                }
 	            }
-	        }
-		 repaint();
+	        }*/
 	}
 	private static void moveRobots(game_service game, DGraph gg) {
-		List<String> log = game.move();
+		/**
+		 * List<String> log = game.move();
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
 				String robot_json = log.get(i);
-				Robot robot = null;
-				JSONObject line;
+				Robot robot = new Robot(robot_json);
 				try {
-					line = new JSONObject(robot_json);
-				
-					JSONObject ttt = line.getJSONObject("Robot");
-					int rid = ttt.getInt("id");
-					int src = ttt.getInt("src");
-					int dest = ttt.getInt("dest");
+					Point3D pr=robot.getpos();
+					int rx=(int)pr.x();
+					int ry=(int)pr.y();
 					
-					if(dest==-1) {
+					Point2D p = MouseInfo.getPointerInfo().getLocation();
+					int x=(int)p.getX();
+					int y=(int)p.getY();
+					System.out.println(x);
+					
+					if((x<=rx+10&&x>=rx-10)&&(y<=ry+10&&y>=ry-10))
+					{
+						int dest=robot.getdest();
+						int src=robot.getsrc();
+						int rid=robot.getid();
+						if(dest==-1) {
 						dest = nextNode(gg, src);
 						game.chooseNextEdge(rid, dest);
-						
 						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						
+					}
 					}
 				}
 		
-			 catch (JSONException e) {
+			 catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 	}
+		
+		
+		
+		
+		for (int i = 0; i < game.getRobots().size(); i++) {
+            String r = game.getRobots().get(i);
+            Robot robot=new Robot(r);
+            if (robot.getdest() == -1) {
+               // String dst_str = JOptionPane.showInputDialog( "Please insert robot " + robot.getid() + " next node destination");
+                
+                try {
+					Point3D pr=robot.getpos();
+					int rx=(int)pr.x();
+					int ry=(int)pr.y();
+					Point2D p = MouseInfo.getPointerInfo().getLocation();
+					int x=(int)p.getX();
+					int y=(int)p.getY();
+					System.out.println(x);
+					
+					if((x<=rx+10&&x>=rx-10)&&(y<=ry+10&&y>=ry-10))
+					{
+						int dest=robot.getdest();
+						int src=robot.getsrc();
+						int rid=robot.getid();
+						if(dest==-1) {
+						dest = nextNode(gg, src);
+						game.chooseNextEdge(rid, dest);
+						System.out.println("Turn to node: "+dest+"  time to end:"+(time/1000));
+					}
+					}
+                }catch (Exception e) {
+						
+					}
+            }
+        }*/
 	}
 		
 		
@@ -436,7 +492,7 @@ public class Game_Client extends JFrame implements ActionListener, MouseListener
 	
 	public static void main(String[] args) {
 		Game_Client gg=new Game_Client();
-		//gg.run();
+		gg.run();
 	}
 	
 }

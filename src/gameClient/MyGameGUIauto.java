@@ -7,13 +7,18 @@ import javax.swing.JOptionPane;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,12 +55,13 @@ public static final double Epsilon=0.0001;
 
 	
 	public MyGameGUIauto()  {
+		this.setTitle("The Maza Of Waze");
 		this.setSize(900, 900);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//String level= JOptionPane.showInputDialog(this,"Please insert Level between [0,23]");
 		//int scenario =Integer.parseInt(level);
-		int scenario=6;
-		if (scenario<23&&scenario>0)
+		int scenario=23;
+		if (scenario<=23&&scenario>=0)
 			 game = Game_Server.getServer(scenario); // you have [0,23] games
 		else 
 			game=Game_Server.getServer(0);
@@ -115,10 +121,10 @@ public static final double Epsilon=0.0001;
 		this.setVisible(true);
 	}
 		public void paint(Graphics g ) {
-			 BufferedImage bufferedImage = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
-		        Graphics2D g2d = bufferedImage.createGraphics();
+				super.paint(g);
+		        Graphics2D g2d = (Graphics2D) g;
 		        g2d.setBackground(new Color(240, 240, 240));
-		       
+		      
 		        
 				Collection<node_data> node=graph.getV();
 				Iterator<node_data> nodes=node.iterator();
@@ -173,39 +179,39 @@ public static final double Epsilon=0.0001;
 							Fruit fr=this.Fruit.get(i);
 							if (fr.getType()==1)
 							{
-								g.setColor(Color.CYAN);
+								g2d.setColor(Color.CYAN);
 								int x=(int)(scale(fr.getPOS().x(),minX,maxX,50,850));
 								int y=(int)(scale(fr.getPOS().y(),minY,maxY,200,700));
-								g.fillOval(x-7,y-7, 20, 20);
+								g2d.fillOval(x-7,y-7, 20, 20);
 							}
 							if(fr.getType()==-1)
 							{
-								g.setColor(Color.GREEN);
+								g2d.setColor(Color.GREEN);
 								int x=(int)(scale(fr.getPOS().x(),minX,maxX,50,850));
 								int y=(int)(scale(fr.getPOS().y(),minY,maxY,200,700));
-								g.fillOval(x-7,y-7, 20, 20);
+								g2d.fillOval(x-7,y-7, 20, 20);
 							}
 						}
 					ArrayList<Robot> robots=this.Robots;
 					List<String> rob = game.getRobots();
 			        for (int i = 1; i <= rob.size(); i++) {
-			            g.drawString(rob.get(i - 1), 150, 70 + (20 * i));
+			            g2d.drawString(rob.get(i - 1), 150, 70 + (20 * i));
 			        }
 					
 					for (int i=0 ;i<robots.size();i++)
 					{
 						Robot r=robots.get(i);
-						int x=(int)(scale(r.getpos().x(),maxX,minX,850,50));
-						int y=(int)(scale(r.getpos().y(),maxY,minY,700,200));
-						g.setColor(Color.BLACK);
-						g.drawOval(x-15,y-15, 30, 30);
-						 g.setFont(new Font("Arial", Font.BOLD, 15));
+						int x=(int)(scale(r.getpos().x(),minX,maxX,50,850));
+						int y=(int)(scale(r.getpos().y(),minY,maxY,200,700));
+						g2d.setColor(Color.BLACK);
+						g2d.drawOval(x-15,y-15, 30, 30);
+						 g2d.setFont(new Font("Arial", Font.BOLD, 15));
 					}
 					
 					
 					
-					Graphics2D g2dComponent = (Graphics2D) g;
-			         g2dComponent.drawImage(bufferedImage, null, 0, 0);
+					
+			      
 		}
 		private void min_max()
 		{
@@ -238,18 +244,16 @@ public static final double Epsilon=0.0001;
 		{
 			game.startGame();
 			int index=0;
-			long time=game.timeToEnd();
+			long time=50;
 			while(game.isRunning()) {
 				
 				moveRobots(game, gg,graph);
-				repaint();
+				
 				try {
 					if(index%2==0) {this.repaint();}
-					else {
-				Thread.sleep(time);
-				index++;
-				}
-				
+					
+						Thread.sleep(time);
+						index++;				
 			} 
 				catch (InterruptedException e) {e.printStackTrace();}	
 			}
