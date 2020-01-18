@@ -42,7 +42,7 @@ public class MyGame {
 				     
 				     find_scale();
 				     setFruits();
-				     setRobots();
+				     setRobots(robots_num);
 		 }
 			 catch (JSONException e) 
 				{
@@ -101,22 +101,46 @@ public class MyGame {
 		
 		
 		
-		public void setRobots()
+		public void setRobots(int robots_num)
 		{
-			Iterator<String> r_iter=game.getRobots().iterator();
-			while(r_iter.hasNext())
+			
+			/**for(int i=0;i<robots_num;i++)
+			{
+				/**Robot robot = null;
+				robot.init(game.getRobots().get(i));
+				if(graph.getNode(i).getLocation()!=null)
+						robot.pos=graph.getNode(i).getLocation();
+				this.robots.add(robot);	
+				
+				game.addRobot(robot.id);
+				if(graph.getNode(i).getLocation()!=null)
+					game.addRobot(i);
+			}
+			Iterator<String> r_itr=game.getRobots().iterator();
+			
+			while(r_itr.hasNext())
 			{
 				Robot robot = null;
-				robot.init(r_iter.next());
+				String s=r_itr.next();
+				robot.init(s);
 				this.robots.add(robot);
+			}*/
+			try {
+				  JSONObject robots = new JSONObject(game.toString());
+		            robots = robots.getJSONObject("GameServer");
+		            int num_robots = robots.getInt("robots");
+		            for (int i = 0; i < num_robots; i++) {
+		            	game.addRobot(i);
+		            	 for (String robot : game.getRobots()) {
+		                     Robot robot_tmp = new Robot(robot);
+		         
+		                     this.robots.add( robot_tmp);
+		            	 }
+		            }
+			}catch (Exception e) {
+				
 			}
-			
-			
-			
-			
-			
 		}
-		
 		public double[] scale_x()
 		{
 			double[] x= {this.maxX,this.minX};
@@ -148,7 +172,10 @@ public class MyGame {
 		{
 			return graph;
 		}
-		
+		public game_service getgame()
+		{
+			return this.game;
+		}
 	
 	
 	

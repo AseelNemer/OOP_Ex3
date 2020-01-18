@@ -81,10 +81,10 @@ public Graph_Algo()
 	
 	@Override
 	public void init(String JSONfile) {
-	
+	/*
 		try 
 		{
-			FileInputStream file =new FileInputStream(JSONfile);
+			FileInputStream file =new FileInputStream(file_name);
 			ObjectInputStream object=new ObjectInputStream(file);
 			this.D= (graph) object.readObject();
 			
@@ -100,19 +100,20 @@ public Graph_Algo()
         { 
             System.out.println("ClassNotFoundException is caught"); 
         } 
-        
+        */
 
-		/**try 
+		try 
 		{	
-			InputStream fis=new FileInputStream(JSONfile);
-		JSONObject read=new JSONObject (new JSONTokener(fis));
+	
+		JSONObject read=new JSONObject (JSONfile);
 			JSONArray edges=(JSONArray) read.get("Edges");
 			JSONArray nodes=(JSONArray) read.get("Nodes");
 			for(int i=0;i<nodes.length();i++) {
 				JSONObject jsonobject=(JSONObject) nodes.get(i);
 				
 				int id=(int) jsonobject.get("id");
-				Point3D p= (Point3D) jsonobject.get("pos");
+				String S=jsonobject.getString("pos");
+				Point3D p=new Point3D(S);
 				node n=new node(id,p);
 				D.addNode(n);
 			}
@@ -128,7 +129,7 @@ public Graph_Algo()
 			
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
-		}*/
+		}
 		
 	}
 
@@ -190,8 +191,8 @@ public Graph_Algo()
 	public double shortestPathDist(int src, int dest) {
 
 		//check if this src and this dest is in the graph
-		if(D.getNode(src)==null)  throw new IllegalArgumentException("the src you entered doesn't exist in this graph ");
-		if(D.getNode(dest)==null) throw new IllegalArgumentException("the dest you entered doesn't exist in this graph");
+		if(D.getNode(src)==null)  throw new IllegalArgumentException("the src you entered doesn't exist in this graph " +src);
+		if(D.getNode(dest)==null) throw new IllegalArgumentException("the dest you entered doesn't exist in this graph" +dest);
 		
 		//set all the nodes tag to 0
 		setTag(D);

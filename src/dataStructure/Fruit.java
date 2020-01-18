@@ -29,6 +29,11 @@ import utils.Point3D;
 		this.type=type;
 	}
 	
+	public Fruit (Fruit f) {
+		this.value=f.getValue();
+		this.type=f.getType();
+		this.p=f.p;
+	}
 	
 	public void init(String JSONfile) {
 

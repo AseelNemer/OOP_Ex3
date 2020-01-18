@@ -13,8 +13,14 @@ public class Robot {
 	int dest;
 	double value;
 	double speed;
+	private Fruit RF =new Fruit();
 	
-	
+	public Robot(int src, int id, double value,Fruit f ) {
+		this.src=src;
+		this.id=id;
+		this.value=value;
+		this.RF=f;
+	}
 	public Robot(int src, int id, Point3D pos, int dest, double value) 
 	{
 		this.src = src;
@@ -23,6 +29,34 @@ public class Robot {
 		this.dest = dest;
 		this.value = value;
 	}
+	
+	
+	
+	public Robot(String JASON) {
+		
+		try {
+				JSONObject line = new JSONObject(JASON);
+				JSONObject ttt = line.getJSONObject("Robot");
+				this.id = ttt.getInt("id");
+				this.src = ttt.getInt("src");
+				this.dest = ttt.getInt("dest");
+				String s= (String) ttt.get("pos");
+				this.pos=new Point3D(s);
+				
+			 }
+			 catch(JSONException e) 
+			 {
+				 e.printStackTrace();
+			 
+			 }
+	}
+	public void SetFruit(Fruit f) {
+		RF=f;	
+	}
+	public Fruit getFruit() {
+		return this.RF;
+	}
+
 	public void init(String JASON) {
 		 try {
 			JSONObject line = new JSONObject(JASON);
@@ -30,12 +64,17 @@ public class Robot {
 			this.id = ttt.getInt("id");
 			this.src = ttt.getInt("src");
 			this.dest = ttt.getInt("dest");
-			Point3D p=new Point3D(ttt.getString("pos"));
-			this.pos=p;
-		 }catch(JSONException e) {e.printStackTrace();
+			String s= (String) ttt.get("pos");
+			this.pos=new Point3D(s);
+			
+		 }
+		 catch(JSONException e) 
+		 {
+			 e.printStackTrace();
 		 
 		 }
 	}
+
 	/**
 	 * return the source of this robot 
 	 * @return

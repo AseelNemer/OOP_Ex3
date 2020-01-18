@@ -47,15 +47,16 @@ public class Game_GUI1 extends JFrame implements ActionListener, MouseListener {
 		graph_algorithms g_algo;
 		LinkedList<Fruit> fruits=new LinkedList<Fruit>();
 		LinkedList<Robot> robots=new LinkedList<Robot>();
-		double minX=0,maxX,minY=0,maxY;
+		double minX=0,maxX=0,minY=0,maxY=0;
 		public Game_GUI1() 
 		{
 			this.setSize(900,900);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.graph=new DGraph();
 			game=Level();
+			
 			String g=game.getGraph();
-
+			graph.init(g);
 			String info = game.toString();
 			JSONObject line;
 			this.g_algo=new Graph_Algo();
@@ -132,7 +133,8 @@ public class Game_GUI1 extends JFrame implements ActionListener, MouseListener {
 				int scenario =Integer.parseInt(level);
 				
 				if (scenario>23||scenario<0)
-					  throw new IllegalArgumentException("please inter a number between [0,23]");
+					return Game_Server.getServer(0);
+					// throw new IllegalArgumentException("please inter a number between [0,23]");
 				return Game_Server.getServer(scenario);
 			}
 			catch(Exception e)
@@ -146,7 +148,7 @@ public class Game_GUI1 extends JFrame implements ActionListener, MouseListener {
 			 BufferedImage bufferedImage = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
 	         Graphics2D g2d = bufferedImage.createGraphics();
 	         g2d.setBackground(new Color(240, 240, 240));
-	        // g2d.clearRect(0, 0, 900, 900);
+	        
 	         
 			Collection<node_data> node=graph.getV();
 			Iterator<node_data> nodes=node.iterator();
@@ -160,7 +162,6 @@ public class Game_GUI1 extends JFrame implements ActionListener, MouseListener {
 					double x_=scale(n.getLocation().x(),minX,maxX,50,850);
 					double y_=scale(n.getLocation().y(),minY,maxY,200,700); 
 					Point3D p_=new Point3D(x_, y_);
-					//Image img=new ImageIcon(this.getClass().getResource("/apple.png")).getImage();
 					g2d.fillOval(p_.ix(), p_.iy(), 10, 10);
 					g2d.setFont(new Font("deafult", Font.BOLD,14));	
 					g2d.setColor(Color.BLUE);
@@ -194,7 +195,7 @@ public class Game_GUI1 extends JFrame implements ActionListener, MouseListener {
 						int y2 =(int)((0.8*p2.iy())+ (0.2*p.iy()));
 						g2d.fillOval(x2-5,y2-5,10,10);
 						
-						//g.fillOval(x, y, width, height);
+						
 					}
 					
 					}

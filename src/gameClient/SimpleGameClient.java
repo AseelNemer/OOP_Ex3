@@ -110,6 +110,7 @@ public class SimpleGameClient {
 		Iterator<oop_edge_data> itr = ee.iterator();
 		int s = ee.size();
 		int r = (int)(Math.random()*s);
+		System.out.println(r);
 		int i=0;
 		while(i<r) {itr.next();i++;}
 		ans = itr.next().getDest();
