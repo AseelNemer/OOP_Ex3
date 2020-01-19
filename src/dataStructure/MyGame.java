@@ -42,6 +42,7 @@ public class MyGame {
 				     
 				     find_scale();
 				     setFruits();
+				     setR();
 				     setRobots(robots_num);
 		 }
 			 catch (JSONException e) 
@@ -88,6 +89,7 @@ public class MyGame {
 	
 	public void setFruits()
 		{
+		this.fruits=new LinkedList<Fruit>();
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while (f_iter.hasNext())
 			{
@@ -100,43 +102,34 @@ public class MyGame {
 		}
 		
 		
-		
+		public void setR()
+		{JSONObject robots;
+		try {
+			   robots = new JSONObject(game.toString());
+               robots = robots.getJSONObject("GameServer");
+               int rs = robots.getInt("robots");
+			
+			    int src_node = 0; 
+			  for(int a = 0;a<rs;a++) {
+				   game.addRobot(src_node+a);
+			  }
+			}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+		}
 		public void setRobots(int robots_num)
 		{
-			
-			/**for(int i=0;i<robots_num;i++)
-			{
-				/**Robot robot = null;
-				robot.init(game.getRobots().get(i));
-				if(graph.getNode(i).getLocation()!=null)
-						robot.pos=graph.getNode(i).getLocation();
-				this.robots.add(robot);	
-				
-				game.addRobot(robot.id);
-				if(graph.getNode(i).getLocation()!=null)
-					game.addRobot(i);
-			}
-			Iterator<String> r_itr=game.getRobots().iterator();
-			
-			while(r_itr.hasNext())
-			{
-				Robot robot = null;
-				String s=r_itr.next();
-				robot.init(s);
-				this.robots.add(robot);
-			}*/
+			this.robots=new LinkedList<Robot>();
 			try {
-				  JSONObject robots = new JSONObject(game.toString());
-		            robots = robots.getJSONObject("GameServer");
-		            int num_robots = robots.getInt("robots");
-		            for (int i = 0; i < num_robots; i++) {
-		            	game.addRobot(i);
-		            	 for (String robot : game.getRobots()) {
+		            	 for (String robot : game.getRobots()) 
+		            	 {
 		                     Robot robot_tmp = new Robot(robot);
-		         
+		                     game.addRobot(robot_tmp.getid());
+		                     
 		                     this.robots.add( robot_tmp);
 		            	 }
-		            }
+		            
 			}catch (Exception e) {
 				
 			}
